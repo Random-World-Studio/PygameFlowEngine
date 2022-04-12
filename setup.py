@@ -6,7 +6,7 @@ setuptools.setup(
     author='pointer-to-bios',
     author_email='yyb1738487169@163.com',
     description='',
-    url='',
+    url='https://github.com/Random-World-Studio/PygameFlowEngine.git',
     packages=setuptools.find_packages(),
     license="GPL v3.0",
     platforms="Any",
