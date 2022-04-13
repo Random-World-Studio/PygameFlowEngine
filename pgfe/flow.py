@@ -8,6 +8,7 @@ import pygame as pg
 import threading
 
 from evehandle import EveHandle
+from efont import create_font
 
 
 def defaultFlash() -> bool:
@@ -28,6 +29,8 @@ class Flow:  # 刷新流类
     tpf = 0  # tick per frame
     real_fps = 0  # 实际帧率
 
+    fps_visi = False
+
     def __init__(self, screen: pg.Surface,  # 流运行的表面
                  bgcolor=(0, 0, 0),  # 背景颜色
                  flash=defaultFlash,  # 绘图函数
@@ -43,6 +46,7 @@ class Flow:  # 刷新流类
         self.state = self.UNINIT
         self.evelist = evelist
         self.flow_thread = threading.Thread(target=self.run)
+        self.fps_visi = False
 
     def run(self):
         tick = 0
@@ -69,16 +73,24 @@ class Flow:  # 刷新流类
                         __event.getHandler()()  # 执行事件handler
             self.screen.fill(self.bgColor)  # 清屏
             flowterm = self.flash()  # 绘制
+            if self.fps_visi:  # 显示帧率
+                self.screen.blit(create_font('fps: {}'.format('%f.2' % self.fps)), (0, 0))
 
-    def start(self):
+    def get_fps(self):  # 获取帧率
+        return self.fps
+
+    def set_fps_visible(self, visible: bool):  # 是否显示帧率
+        self.fps_visi = visible
+
+    def start(self):  # 开启刷新流
         if self.state == self.UNINIT:
             self.state = self.RUNNING
             self.flow_thread.start()
         elif self.state == self.STOP:
             self.state = self.RUNNING
 
-    def stop(self):
+    def stop(self):  # 暂停刷新流
         self.state = self.STOP
 
-    def kill(self):
+    def kill(self):  # 终止刷新流
         self.state = self.DEAD
